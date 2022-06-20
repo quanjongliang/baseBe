@@ -14,11 +14,6 @@ import { DatabaseModule } from "@/database";
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     DatabaseModule,
-    TypeOrmModule.forRoot({
-      type: "postgres",
-      url:
-        process.env.DATABASE_URL || "postgres://user:password@postgres:5432/db",
-    }),
     MailerModule,
     RepositoryModule,
     AuthModule,
