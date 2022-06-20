@@ -7,11 +7,16 @@ import * as fs from "fs";
 @Injectable()
 export class CloundinaryService {
   constructor(private cloudinaryRepository: CloundinaryReposiotry) {
+    // cloudinary.config({
+    //   cloud_name: CLOUDINARY_CONFIG.NAME,
+    //   api_key: CLOUDINARY_CONFIG.API_KEY,
+    //   api_secret: CLOUDINARY_CONFIG.API_SECRET,
+    //   secure: true,
+    // });
     cloudinary.config({
-      cloud_name: CLOUDINARY_CONFIG.NAME,
-      api_key: CLOUDINARY_CONFIG.API_KEY,
-      api_secret: CLOUDINARY_CONFIG.API_SECRET,
-      secure: true,
+      cloud_name: "dv6zan7ag",
+      api_key: "756826445571745",
+      api_secret: "nzl5H1ZXNUxxq0RxGOblGuYBELA",
     });
   }
 

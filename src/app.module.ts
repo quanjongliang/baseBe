@@ -5,10 +5,11 @@ import { RepositoryModule } from "@/repository";
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { MulterModule } from "@nestjs/platform-express";
-import { TypeOrmModule } from "@nestjs/typeorm";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { DatabaseModule } from "@/database";
+import { UploadFileInterceptor } from "./interceptors/upload-file.interceptor";
+import { DriveModule } from "@/drive/drive.module";
 
 @Module({
   imports: [
@@ -19,8 +20,9 @@ import { DatabaseModule } from "@/database";
     AuthModule,
     MulterModule,
     CloudinaryModule,
+    DriveModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, UploadFileInterceptor],
 })
 export class AppModule {}

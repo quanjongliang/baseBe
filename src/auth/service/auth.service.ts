@@ -21,6 +21,7 @@ import {
   HttpStatus,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { default as jwtDecode, default as jwt_decode } from "jwt-decode";
@@ -239,5 +240,23 @@ export class AuthService {
     const checkUser = await this.userRepository.checkExistUser(user.id);
     await this.userRepository.save({ ...checkUser, avatar });
     return avatar;
+  }
+
+  //ok
+  async validateUserWithRefreshToken(
+    refreshToken: string,
+    payload: UserWithOutPassword
+  ) {
+    const { id } = payload;
+    const user = await this.userRepository.checkExistUser(id);
+
+    const isMatchingRefreshToken =
+      refreshToken === user.currentHashedRefreshToken;
+
+    if (!isMatchingRefreshToken) {
+      throw new UnauthorizedException();
+    }
+
+    return user;
   }
 }

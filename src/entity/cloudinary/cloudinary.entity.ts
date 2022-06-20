@@ -1,6 +1,6 @@
-import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from "typeorm";
 
-export const CLOUNDINARY_TABLE_NAME = 'cloundinary';
+export const CLOUNDINARY_TABLE_NAME = "cloundinary";
 
 @Entity(CLOUNDINARY_TABLE_NAME)
 export class Cloundinary {
@@ -30,9 +30,9 @@ export class Cloundinary {
   type: string;
   @Column({ nullable: true })
   etag: string;
-  @Column({ type: 'text', default: '' })
+  @Column({ type: "text", default: "" })
   url: string;
-  @Column({ type: 'text', default: '' })
+  @Column({ type: "text", default: "" })
   secure_url: string;
   @Column({ nullable: true })
   original_filename: string;
@@ -40,5 +40,4 @@ export class Cloundinary {
   original_extension: string;
   @Column({ nullable: true })
   api_key: string;
-
 }

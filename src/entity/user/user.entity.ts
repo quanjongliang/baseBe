@@ -40,4 +40,7 @@ export class User extends BaseColumn {
 
   @Column({ nullable: true })
   phone: string;
+
+  @Column({ type: "text", nullable: true })
+  public currentHashedRefreshToken: string;
 }
