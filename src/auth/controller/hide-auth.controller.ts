@@ -1,6 +1,6 @@
+import { PageOptionsDto } from "@/core";
 import { Controller, Get, Query } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { QueryUserDto } from "../dto";
 import { AuthService } from "../service";
 
 @Controller("hide-auth")
@@ -8,18 +8,13 @@ import { AuthService } from "../service";
 export class HideAuthController {
   constructor(private authService: AuthService) {}
 
-  // @Post()
-  // async createAdminUser(@Body() createUserDto: CreateUserDto) {
-  //   return this.authService.createAdminUser(createUserDto);
-  // }
-
   @Get()
   async getAllUser() {
     return this.authService.getAllUser();
   }
 
   @Get("list-user")
-  async getAllUserList(@Query() queryUserDto: QueryUserDto) {
+  async getAllUserList(@Query() queryUserDto: PageOptionsDto) {
     return this.authService.getAllUserList(queryUserDto);
   }
 }

@@ -1,31 +1,29 @@
+import { AuthModule } from "@/auth";
+import { CloudinaryModule } from "@/cloudinary";
+import { MailerModule } from "@/mailer";
+import { RepositoryModule } from "@/repository";
 import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { MulterModule } from "@nestjs/platform-express";
+import { TypeOrmModule } from "@nestjs/typeorm";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { DatabaseModule } from "@/database";
-import { MailerModule } from "@/mailer";
-import { RepositoryModule } from "@/repository";
-import { AuthModule } from "@/auth";
-import { AccountModule } from "@/account";
-import { PostModule } from "@/post";
-import { TagModule } from "@/tag";
-import { MulterModule } from "@nestjs/platform-express";
-import { CloudinaryModule } from "@/cloudinary";
-import { AuditModule } from "@/audit";
-import { HistoryModule } from "@/history";
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     DatabaseModule,
+    TypeOrmModule.forRoot({
+      type: "postgres",
+      url:
+        process.env.DATABASE_URL || "postgres://user:password@postgres:5432/db",
+    }),
     MailerModule,
     RepositoryModule,
     AuthModule,
-    PostModule,
-    TagModule,
-    AccountModule,
     MulterModule,
     CloudinaryModule,
-    AuditModule,
-    HistoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,4 +1,3 @@
-import { Account, AuditInformation } from "@/entity";
 import { TemplateOptions } from "nodemailer-express-handlebars";
 
 export enum MAILER_TEMPLATE_ENUM {
@@ -92,12 +91,10 @@ export interface RequestStoneMailContext {
   UID: string;
   note: string;
   total: number;
-  auditInformations: AuditInformation[];
 }
 
 export interface BuyAccountByUserContext {
   username: string;
-  account: Account;
   listImage: string[];
 }
 export interface BuyAccountsContext {

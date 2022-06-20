@@ -14,7 +14,6 @@ import { extname } from "path";
 import { v4 as uuid } from "uuid";
 import { AppService } from "./app.service";
 import { CloundinaryService } from "@/cloudinary";
-import { Patch } from "@nestjs/common";
 
 @Controller()
 export class AppController {
@@ -41,40 +40,11 @@ export class AppController {
     })
   )
   uploadFile(@UploadedFile() file: Express.Multer.File) {
-    // return this.driverService.uploadFile(file);
     return this.cloundinaryService.uploadFile(file);
   }
 
   @Delete(":publicId")
   deleteFile(@Param("publicId") publicId: string) {
     return this.cloundinaryService.deleteFile(publicId);
-  }
-
-  @Post("send-mail")
-  sendMail() {
-    // return this.mailerService.sendWelcomeMail(
-    //   'lhongquan.1998@gmail.com',
-    //   'Quill',
-    // );
-    return this.mailerService.sendResetPasswordMail({
-      to: "lhongquan.1998@gmail.com",
-      token: "ASDASDASDAS",
-      username: "username",
-    });
-  }
-
-  @Get("excel")
-  async getDataExcel() {
-    return this.appService.getDataFromExcel();
-  }
-
-  @Patch("slug")
-  async updateSlugPost() {
-    return this.appService.updateSlugPost();
-  }
-
-  @Post("json-weapon")
-  async getWeaponFromJson(){
-    return this.appService.getWeaponJsonFile()
   }
 }

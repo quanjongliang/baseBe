@@ -1,5 +1,3 @@
-import { Account, AuditInformation } from "@/entity";
-
 export interface SendWelcomeMailInterface {
   to: string;
   username: string;
@@ -14,18 +12,15 @@ export interface SendAuditStoneMailInterface extends SendWelcomeMailInterface {
   password: string;
   server: string;
   UID: string;
-  auditInformations: AuditInformation[];
   total: number;
   note?: string;
 }
 
 export interface SendBuyAccountMailInterface extends SendWelcomeMailInterface {
   username: string;
-  account: Account;
   listImage: string[];
 }
 
 export interface SendBuyAccountsMailInterface extends SendWelcomeMailInterface {
   cost: number;
-  accounts: Account[];
 }

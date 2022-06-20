@@ -1,6 +1,4 @@
 import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
-import { Account } from '../account';
-import { BaseColumn } from '../base';
 
 export const CLOUNDINARY_TABLE_NAME = 'cloundinary';
 
@@ -42,15 +40,5 @@ export class Cloundinary {
   original_extension: string;
   @Column({ nullable: true })
   api_key: string;
-  @Column({ default: false, nullable: true })
-  isBanner: boolean;
 
-  @Column({default:false,nullable:true})
-  isAvatar:boolean
-  
-  @Column({ default: 0, nullable: true })
-  order: number;
-
-  @ManyToOne(() => Account, (account) => account.cloundinary)
-  account: Account;
 }

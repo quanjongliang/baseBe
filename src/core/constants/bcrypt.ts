@@ -1,4 +1,4 @@
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from "bcrypt";
 
 const SALT_OR_ROUNDS = 10;
 
@@ -8,7 +8,7 @@ export const hashedPassword = (password: string): Promise<string> => {
 
 export const checkIsMatchPassword = (
   password: string,
-  hashedPassword: string,
+  passwordToCompare: string
 ): Promise<boolean> => {
-  return bcrypt.compare(password, hashedPassword);
+  return bcrypt.compare(password, passwordToCompare);
 };

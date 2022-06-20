@@ -1,20 +1,18 @@
 import {
   AUTH_MESSAGE,
+  BaseQueryResponse,
   checkIsMatchPassword,
+  DEFAULT_CONFIG,
   EXPIRES_IN_MINUTE,
   hashedPassword,
-  DEFAULT_CONFIG,
-  BaseQueryResponse,
+  PageOptionsDto,
 } from "@/core/";
 import {
-  History,
-  HISTORY_TYPE,
   PayloadTokenUser,
   User,
   UserWithOutPassword,
   USER_ROLE,
 } from "@/entity";
-import { HistoryService } from "@/history";
 import { getExpiredTime, MailerService } from "@/mailer";
 import { UserRepository } from "@/repository";
 import {
@@ -26,7 +24,7 @@ import {
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { default as jwtDecode, default as jwt_decode } from "jwt-decode";
-import { Like, UpdateResult } from "typeorm";
+import { ILike, Like } from "typeorm";
 import {
   ChangePasswordDto,
   CreateUserDto,
@@ -34,7 +32,7 @@ import {
   QueryUserDto,
   UpdateUserRoleDto,
 } from "../dto";
-import { SubmitUserPayload, ResetPasswordPayload } from "../interface";
+import { ResetPasswordPayload, SubmitUserPayload } from "../interface";
 import { isTokenExpired } from "../util";
 
 @Injectable()
@@ -42,8 +40,7 @@ export class AuthService {
   constructor(
     private userRepository: UserRepository,
     private jwtService: JwtService,
-    private mailerService: MailerService,
-    private historyService: HistoryService
+    private mailerService: MailerService
   ) {}
 
   async validateUser(username: string, password: string): Promise<User | null> {
@@ -55,13 +52,12 @@ export class AuthService {
   }
 
   async login(user: UserWithOutPassword) {
-    const { id, email, username, phone, money, role } = user;
+    const { id, email, username, phone, role } = user;
     const payload: PayloadTokenUser = {
       id,
       email,
       username,
       phone,
-      money,
       role,
     };
     return this.jwtService.sign(payload);
@@ -181,7 +177,7 @@ export class AuthService {
   async updateUserRole(
     user: User,
     updateUserRoleDto: UpdateUserRoleDto
-  ): Promise<[User, History]> {
+  ): Promise<[User]> {
     const { username, role } = updateUserRoleDto;
     const checkUser = await this.userRepository.findOne({ username });
     if (!checkUser)
@@ -189,15 +185,7 @@ export class AuthService {
         AUTH_MESSAGE.USER.NOT_FOUND,
         HttpStatus.NOT_FOUND
       );
-    return Promise.all([
-      this.userRepository.save({ ...checkUser, role }),
-      this.historyService.createHistoryChangeRole({
-        admin: user.username,
-        username,
-        oldRole: checkUser.role,
-        newRole: role,
-      }),
-    ]);
+    return Promise.all([this.userRepository.save({ ...checkUser, role })]);
   }
 
   async getAllUser(): Promise<User[]> {
@@ -205,34 +193,42 @@ export class AuthService {
   }
 
   async getAllUserList(
-    queryUserDto: QueryUserDto
+    queryUserDto: PageOptionsDto
   ): Promise<BaseQueryResponse<User>> {
     const {
-      offset = DEFAULT_CONFIG.OFFSET,
-      limit = DEFAULT_CONFIG.OFFSET,
-      role = "",
-      username = "",
+      skip = DEFAULT_CONFIG.OFFSET,
+      take = DEFAULT_CONFIG.OFFSET,
+      sortColumn,
+      query,
+      order,
     } = queryUserDto;
-    const where = {};
-    if (role) {
-      where["role"] = role;
-    }
-    if (username) {
-      where["username"] = Like(`%${username}%`);
-    }
-    const [total, data] = await Promise.all([
-      this.userRepository.count({ where }),
-      this.userRepository.find({
-        take: limit,
-        skip: offset,
-        select: ["id", "username", "email", "money", "role"],
-        where,
-        order: {
-          role: "ASC",
-          username: "ASC",
+    // const [total, data] = await Promise.all([
+    //   this.userRepository.count({ where }),
+    // //   this.userRepository.find({
+    // //     take: limit,
+    // //     skip: offset,
+    // //     select: ["id", "username", "email", "money", "role"],
+    // //     where,
+    // //     order: {
+    // //       role: "ASC",
+    // //       username: "ASC",
+    // //     },
+    // //   }),
+    // // ]);
+    const [data, total] = await this.userRepository.findAndCount({
+      where: [
+        { username: ILike(query) },
+        {
+          email: ILike(query),
         },
-      }),
-    ]);
+      ],
+      take,
+      skip,
+      order: {
+        [sortColumn || "id"]: order,
+      },
+    });
+
     return {
       data,
       total,
