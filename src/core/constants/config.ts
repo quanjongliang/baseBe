@@ -16,7 +16,8 @@ export const MAILER_CONFIG = {
   // SECURE: true,
   USER: "shoppacc.9999@gmail.com",
   // USER: "customer.center@tempest.vn",
-  PASS: "Gunny2.0",
+  PASS: "knmpnfkoitioimbs",
+
   TEMPLATE_DIR: "./templates/",
   FROM: `"Tempest Genshin" <${SHOP_EMAIL}>`,
 };
