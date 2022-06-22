@@ -1,5 +1,6 @@
+import { hashedPassword } from "@/core";
 import { Exclude } from "class-transformer";
-import { Entity, Column } from "typeorm";
+import { Entity, Column, BeforeInsert, BeforeUpdate } from "typeorm";
 import { BaseColumn } from "../base";
 
 export enum USER_ROLE {
@@ -43,4 +44,6 @@ export class User extends BaseColumn {
 
   @Column({ type: "text", nullable: true })
   public currentHashedRefreshToken: string;
+
+
 }

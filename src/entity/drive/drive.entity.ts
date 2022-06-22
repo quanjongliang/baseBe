@@ -17,5 +17,7 @@ export class Drive {
   @Column({ nullable: true, type: "text" })
   thumbnailLink: string;
   @Column({ nullable: true, type: "text" })
+  mimeType: string;
+  @Column({ nullable: true, type: "text" })
   createdTime: Date;
 }

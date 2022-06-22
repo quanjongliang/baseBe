@@ -1,23 +1,22 @@
+import { CloundinaryService } from "@/cloudinary";
+import { DriveService } from "@/drive";
 import { MailerService } from "@/mailer";
 import {
+  BadRequestException,
   Controller,
   Delete,
   Get,
+  Param,
   Post,
+  Res,
+  StreamableFile,
   UploadedFile,
   UseInterceptors,
-  Param,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { diskStorage } from "multer";
-import { extname } from "path";
-import { v4 as uuid } from "uuid";
 import { AppService } from "./app.service";
-import { CloundinaryService } from "@/cloudinary";
-import { Cloundinary } from "@/entity";
-import { UploadFileInterceptor } from "./interceptors/upload-file.interceptor";
-import { DriveService } from "@/drive";
-
+import * as fs from "fs";
+import { Response } from "express";
 @Controller()
 export class AppController {
   constructor(
@@ -32,39 +31,39 @@ export class AppController {
     return this.appService.getHello();
   }
   @Post("upload")
-  @UseInterceptors(
-    FileInterceptor("file", {
-      storage: diskStorage({
-        destination: "./uploads",
-        filename: (_req, file, cb) => {
-          const randomName = uuid();
-          cb(null, `${randomName}${extname(file.originalname)}`);
-        },
-      }),
-    })
-  )
+  @UseInterceptors(FileInterceptor("file"))
   uploadFile(@UploadedFile() file: Express.Multer.File) {
-    // return this.cloundinaryService.uploadFile(file);
     return this.driveService.uploadFile(file);
   }
-  // @Post("upload")
-  // @UseInterceptors(
-  //   FileInterceptor("file", {
-  //     storage: diskStorage({
-  //       destination: "./uploads",
-  //       filename: (_req, file, cb) => {
-  //         const randomName = uuid();
-  //         cb(null, `${randomName}${extname(file.originalname)}`);
-  //       },
-  //     }),
-  //   })
-  // )
-  // uploadFile(@UploadedFile() file: Express.Multer.File) {
-  //   // return this.cloundinaryService.uploadFile(file);
-  // }
 
   @Delete(":publicId")
   deleteFile(@Param("publicId") publicId: string) {
     return this.cloundinaryService.deleteFile(publicId);
+  }
+
+  @Get("concat")
+  getConcatField() {
+    return this.appService.getConcat();
+  }
+  @Get("download/:id")
+  async downloadFile(
+    @Param("id") id: string,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    try {
+      const { newName, mimeType, file } = await this.driveService.downloadFile(
+        id
+      );
+      // res.set({
+      //   "Content-Type": mimeType,
+      //   "Content-Disposition": `attachment; filename="${newName}"`,
+      // });
+      res.setHeader("Content-type", mimeType);
+      res.setHeader("Content-disposition", "attachment; filename=" + newName);
+      res.send(file);
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException(error.message);
+    }
   }
 }

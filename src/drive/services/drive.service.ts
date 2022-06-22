@@ -1,5 +1,11 @@
+import { Response } from "express";
 import { DriveReposiotry } from "@/repository/drive";
-import { BadRequestException, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  StreamableFile,
+} from "@nestjs/common";
 import { GoogleAuth } from "google-auth-library";
 import { drive_v3, google } from "googleapis";
 import {
@@ -7,6 +13,9 @@ import {
   getFileMetaDataDrive,
   removeFileFs,
 } from "../common";
+import * as fs from "fs";
+import { randomUUID } from "crypto";
+import { FileDownloadInterface } from "../intefaces";
 @Injectable()
 export class DriveService {
   private googleAuth: GoogleAuth;
@@ -56,5 +65,27 @@ export class DriveService {
   }
   async deleteFile(fileId: string) {
     return this.driveService.files.delete({ fileId });
+  }
+
+  async downloadFile(fileId: string) {
+    const { id, name, mimeType } = await this.driveRepository.findOne(fileId);
+    const newName = randomUUID() + name;
+    if (!id) throw new NotFoundException(`Drive id: ${id} not found!`);
+    return this.driveService.files
+      .get({ fileId, alt: "media" }, { responseType: "stream" })
+      .then(
+        ({ data }) =>
+          new Promise(
+            (resolve: (file: FileDownloadInterface) => void, reject) => {
+              const buf: Uint8Array[] = [];
+              data.on("data", (e) => buf.push(e));
+              data.on("error", (err) => reject(err));
+              data.on("end", () => {
+                const file = Buffer.concat(buf);
+                return resolve({ file, mimeType, newName });
+              });
+            }
+          )
+      );
   }
 }
