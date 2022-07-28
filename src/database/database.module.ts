@@ -1,8 +1,23 @@
+import { ApolloDriverConfig, ApolloDriver } from "@nestjs/apollo";
 import { Module } from "@nestjs/common";
+import { GraphQLModule } from "@nestjs/graphql";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { join } from "path";
 
 @Module({
   imports: [
+    // GraphQLModule.forRoot<ApolloDriverConfig>({
+    //   // cors: {
+    //   //   origin: "http://localhost:3000",
+    //   //   credentials: true,
+    //   // },
+    //   driver: ApolloDriver,
+    //   installSubscriptionHandlers: true,
+    //   autoSchemaFile: "schema.gql",
+    //   subscriptions: {
+    //     "graphql-ws": true,
+    //   },
+    // }),
     TypeOrmModule.forRoot({
       type: "postgres",
       host: process.env["POSTGRES_HOST"] || "localhost",

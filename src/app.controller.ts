@@ -17,13 +17,14 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { AppService } from "./app.service";
 import * as fs from "fs";
 import { Response } from "express";
+import { PdfService } from "@/pdf";
 @Controller()
 export class AppController {
   constructor(
     private readonly appService: AppService,
-    private mailerService: MailerService,
     private cloundinaryService: CloundinaryService,
-    private driveService: DriveService
+    private driveService: DriveService,
+    private pdfService: PdfService
   ) {}
 
   @Get()
@@ -65,5 +66,15 @@ export class AppController {
       console.log(error);
       throw new BadRequestException(error.message);
     }
+  }
+  @Get("pdf/:name")
+  async getPdfFile(@Param() name: string, @Res() res: Response) {
+    // return this.pdfService.createFilePdf(name, res);
+    return this.pdfService.createResumePdf(res);
+  }
+
+  @Get('compare-image')
+  async compareImage(){
+    return this.appService.compareImage()
   }
 }

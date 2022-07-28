@@ -26,12 +26,10 @@ COPY . .
 RUN npm i
 RUN npm i -g typeorm pg
 RUN npm run build
-RUN npm run static
-RUN npm run build
 
 # RUN npm run typeorm migration:run
 
 EXPOSE 8080
 # CMD [ "npm",'run', "start" ]
-CMD ["sh", "-c", "typeorm migration:run; node /app/dist/src/main.js"]
+CMD ["sh", "-c", "typeorm migration:run; node dist/main.js"]
 # CMD ["node","dist/main"]

@@ -3,6 +3,7 @@ import { Connection } from "typeorm";
 import { DriveReposiotry } from "./repository/drive";
 import * as http from 'http'
 import * as fs from 'fs'
+import * as jimp from 'jimp'
 @Injectable()
 export class AppService {
   constructor(private driveRepository: DriveReposiotry,
@@ -38,6 +39,24 @@ export class AppService {
        console.log("Download Completed");
    });
 });
+  }
+
+  async compareImage(){
+   const logo = await jimp.read('images/logo.jpeg')
+   const logo2 = await jimp.read('images/logo-2.jpeg')
+
+   const logoHash = logo.hash()
+   const logo2Hash = logo2.hash()
+
+   const distance = jimp.distance(logo,logo2)
+
+   const diff = jimp.diff(logo,logo2)
+
+    return {
+      distance,
+      result: distance > 0.2 ? 'Image dont match' : 'Image match'
+    }
+
   }
 
   
